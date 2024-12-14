@@ -1,12 +1,12 @@
-﻿unit Zone.API.Movie;
+﻿unit Zona.API.Movie;
 
 interface
 
 uses
-  Rest.Json, Rest.Json.Types, Zone.API.Base;
+  Rest.Json, Rest.Json.Types, Zona.API.Base;
 
 type
-  TZoneMovie = class(TZoneObject)
+  TZonaMovie = class(TZonaObject)
   private
     [JsonNameAttribute('type3d')]
     FType3d: Integer;
@@ -20,8 +20,6 @@ type
     FGenre2: string;
     [JsonNameAttribute('playable')]
     FPlayable: Boolean;
-    [JsonNameAttribute('id')]
-    FId: string;
     [JsonNameAttribute('episodes')]
     FEpisodes: string;
     [JsonNameAttribute('indexed')]
@@ -52,14 +50,24 @@ type
     FReleaseDateRus: TDateTime;
     [JsonNameAttribute('release_date_int')]
     FReleaseDateInt: TDateTime;
+    [JsonNameAttribute('adult')]
+    FAdult: Boolean;
+    [JsonNameAttribute('country')]
+    FCountry: string;
+    [JsonNameAttribute('rating_imdb')]
+    FRatingIMDB: Extended;
+    [JsonNameAttribute('rating_kinopoisk')]
+    FRatingKP: Extended;
   public
     property Type3d: Integer read FType3d write FType3d;
     property Year: Integer read FYear write FYear;
-    property NameOriginal: string read FNameOriginal write FNameOriginal;
     property Rating: Extended read FRating write FRating;
+    property RatingIMDB: Extended read FRatingIMDB write FRatingIMDB;
+    property RatingKP: Extended read FRatingKP write FRatingKP;
     property Genre2: string read FGenre2 write FGenre2;
     property Playable: Boolean read FPlayable write FPlayable;
-    property Id: string read FId write FId;
+    property Adult: Boolean read FAdult write FAdult;
+    property Country: string read FCountry write FCountry;
     property Episodes: string read FEpisodes write FEpisodes;
     property Indexed: Integer read FIndexed write FIndexed;
     property SerialEndYear: Integer read FSerialEndYear write FSerialEndYear;
@@ -70,9 +78,10 @@ type
     property Abuse: string read FAbuse write FAbuse;
     property TorCount: Integer read FTorCount write FTorCount;
     property Trailer: Boolean read FTrailer write FTrailer;
+    property NameOriginal: string read FNameOriginal write FNameOriginal;
+    property NameEng: string read FNameEng write FNameEng;
     property NameRus: string read FNameRus write FNameRus;
     property Serial: Boolean read FSerial write FSerial;
-    property NameEng: string read FNameEng write FNameEng;
     property ReleaseDateRus: TDateTime read FReleaseDateRus write FReleaseDateRus;
     property ReleaseDateInt: TDateTime read FReleaseDateInt write FReleaseDateInt;
   end;

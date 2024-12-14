@@ -1,9 +1,9 @@
-﻿unit Zone.API.Response;
+﻿unit Zona.API.Response;
 
 interface
 
 uses
-  Rest.Json, Rest.Json.Types, Zone.API.Base;
+  Rest.Json, Rest.Json.Types, Zona.API.Base;
 
 type
   TResponse = class
@@ -17,7 +17,7 @@ type
     property Start: Int64 read FStart write FStart;
   end;
 
-  TResponse<T: TZoneObject> = class(TResponse)
+  TResponse<T: TZonaObject> = class(TResponse)
   private
     [JsonNameAttribute('docs')]
     FDocs: TArray<T>;
@@ -64,7 +64,7 @@ type
     destructor Destroy; override;
   end;
 
-  TZoneResponseBase = class
+  TZonaResponseBase = class
   private
     [JsonNameAttribute('responseHeader')]
     FResponseHeader: TResponseHeader;
@@ -73,7 +73,7 @@ type
     destructor Destroy; override;
   end;
 
-  TZoneResponse<T: TZoneObject> = class(TZoneResponseBase)
+  TZonaResponse<T: TZonaObject> = class(TZonaResponseBase)
   private
     [JsonNameAttribute('response')]
     FResponse: TResponse<T>;
@@ -101,17 +101,17 @@ begin
   inherited;
 end;
 
-{ TZoneResponseBase }
+{ TZonaResponseBase }
 
-destructor TZoneResponseBase.Destroy;
+destructor TZonaResponseBase.Destroy;
 begin
   FResponseHeader.Free;
   inherited;
 end;
 
-{ TZoneResponse<T> }
+{ TZonaResponse<T> }
 
-destructor TZoneResponse<T>.Destroy;
+destructor TZonaResponse<T>.Destroy;
 begin
   FResponse.Free;
   inherited;

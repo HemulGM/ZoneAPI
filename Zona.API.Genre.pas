@@ -1,12 +1,12 @@
-﻿unit Zone.API.Genre;
+﻿unit Zona.API.Genre;
 
 interface
 
 uses
-  Rest.Json, Rest.Json.Types, Zone.API.Base;
+  Rest.Json, Rest.Json.Types, Zona.API.Base;
 
 type
-  TZoneGenre = class(TZoneObject)
+  TZonaGenre = class(TZonaObject)
   private
     [JsonNameAttribute('ord')]
     FOrd: Integer;
@@ -16,8 +16,6 @@ type
     FName: string;
     [JsonNameAttribute('fictional')]
     FFictional: Boolean;
-    [JsonNameAttribute('id')]
-    FId: string;
     [JsonNameAttribute('adult')]
     FAdult: Boolean;
   public
@@ -25,7 +23,6 @@ type
     property Custom: Boolean read FCustom write FCustom;
     property Name: string read FName write FName;
     property Fictional: Boolean read FFictional write FFictional;
-    property Id: string read FId write FId;
     property Adult: Boolean read FAdult write FAdult;
   end;
 
