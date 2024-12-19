@@ -3,7 +3,7 @@
 interface
 
 uses
-  Rest.Json, Rest.Json.Types, Zona.API.Base;
+  System.SysUtils, Rest.Json, Rest.Json.Types, Zona.API.Base, Zona.API.Person;
 
 type
   TZonaMovie = class(TZonaObject)
@@ -58,6 +58,16 @@ type
     FRatingIMDB: Extended;
     [JsonNameAttribute('rating_kinopoisk')]
     FRatingKP: Extended;
+    [JsonNameAttribute('description')]
+    FDescription: string;
+    [JsonNameAttribute('genre_name')]
+    FGenreNames: string;
+    [JsonNameAttribute('persons')]
+    FPersons: string;
+    FPersonItems: TArray<TZonaPerson>;
+    [JsonNameAttribute('min_age')]
+    FMinAge: Integer;
+    function GetPersonItems: TArray<TZonaPerson>;
   public
     property Type3d: Integer read FType3d write FType3d;
     property Year: Integer read FYear write FYear;
@@ -73,6 +83,7 @@ type
     property SerialEndYear: Integer read FSerialEndYear write FSerialEndYear;
     property Runtime: Integer read FRuntime write FRuntime;
     property Quality: Integer read FQuality write FQuality;
+    property MinAge: Integer read FMinAge write FMinAge;
     property SerialEnded: Boolean read FSerialEnded write FSerialEnded;
     property AudioQuality: Integer read FAudioQuality write FAudioQuality;
     property Abuse: string read FAbuse write FAbuse;
@@ -81,12 +92,46 @@ type
     property NameOriginal: string read FNameOriginal write FNameOriginal;
     property NameEng: string read FNameEng write FNameEng;
     property NameRus: string read FNameRus write FNameRus;
+    property Description: string read FDescription write FDescription;
+    property GenreNames: string read FGenreNames write FGenreNames;
+    property Persons: string read FPersons write FPersons;
+    property PersonItems: TArray<TZonaPerson> read GetPersonItems;
     property Serial: Boolean read FSerial write FSerial;
     property ReleaseDateRus: TDateTime read FReleaseDateRus write FReleaseDateRus;
     property ReleaseDateInt: TDateTime read FReleaseDateInt write FReleaseDateInt;
+    destructor Destroy; override;
   end;
 
 implementation
+
+{ TZonaMovie }
+
+destructor TZonaMovie.Destroy;
+begin
+  for var Item in FPersonItems do
+    Item.Free;
+  inherited;
+end;
+
+function TZonaMovie.GetPersonItems: TArray<TZonaPerson>;
+begin
+  if Length(FPersonItems) <= 0 then
+  begin
+    if not Persons.IsEmpty then
+    try
+      var Data := TJson.JsonToObject<TZonaPersons>(Format('{ "items": %s }', [Persons]));
+      try
+        FPersonItems := Data.Items;
+        Data.Items := [];
+      finally
+        Data.Free;
+      end;
+    except
+      //
+    end;
+  end;
+  Result := FPersonItems;
+end;
 
 end.
 

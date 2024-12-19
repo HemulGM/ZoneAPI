@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, REST.Client, REST.Types, Zona.API.Response,
   Zona.API.QBuilder, Zona.API.Base, Zona.API.Genre, Zona.API.Movie,
-  Zona.API.Country;
+  Zona.API.Country, Zona.API.Torrent;
 
 type
   TZonaQueryBuilder = Zona.API.QBuilder.TZonaQueryBuilder;
@@ -31,6 +31,9 @@ type
     function GetGenres: TZonaResponse<TZonaGenre>;
     function GetCountries: TZonaResponse<TZonaCountry>;
     function GetMovies(const Q: string; Offset, Count: Integer; const Sort: string = ''): TZonaResponse<TZonaMovie>;
+    function GetTorrents(const Q: string; Offset, Count: Integer; const Sort: string = ''): TZonaResponse<TZonaTorrent>;
+    class function BuildImageUrlV1(const Id: string): string;
+    class function BuildImageUrlV2(const Id: string): string;
   end;
 
   TRESTClientHelper = class helper for TRESTClient
@@ -50,6 +53,16 @@ begin
 end;
 
 { TZonaAPI }
+
+class function TZonaAPI.BuildImageUrlV1(const Id: string): string;
+begin
+  Result := 'https://img2.zonapic.com/images/film_240/' + Id.Substring(0, 4) + '/' + Id + '.jpg';
+end;
+
+class function TZonaAPI.BuildImageUrlV2(const Id: string): string;
+begin
+  Result := 'https://img2.zonapic.com/images/film_240/' + Id.Substring(0, 3) + '/' + Id + '.jpg';
+end;
 
 constructor TZonaAPI.Create(AOwner: TComponent);
 begin
@@ -103,12 +116,27 @@ begin
   var Client := GetClient;
   try
     Client.AddQueryParam('q', '(' + Q + ')');
-    Client.AddQueryParam('fl', 'id,year,playable,trailer,adult,rating_kinopoisk,rating_imdb,country,quality,audio_quality,type3d,serial,languages_imdb,rating,genre2,runtime,episodes,tor_count,serial_end_year,serial_ended,abuse,release_date_int,release_date_rus,indexed,geo_rules,partner_entity_id,partner_type,name_rus,name_ukr,name_eng,name_original');
+    //Client.AddQueryParam('fl', 'id,year,playable,trailer,adult,rating_kinopoisk,rating_imdb,country,quality,audio_quality,type3d,serial,languages_imdb,rating,genre2,runtime,episodes,tor_count,serial_end_year,serial_ended,abuse,release_date_int,release_date_rus,indexed,geo_rules,partner_entity_id,partner_type,name_rus,name_ukr,name_eng,name_original');
     Client.AddQueryParam('start', Offset.ToString);
     Client.AddQueryParam('rows', Count.ToString);
     if not Sort.IsEmpty then
       Client.AddQueryParam('sort', Sort);
     Result := Client.GetEntity<TZonaResponse<TZonaMovie>>('movie/select');
+  finally
+    Client.Free;
+  end;
+end;
+
+function TZonaAPI.GetTorrents(const Q: string; Offset, Count: Integer; const Sort: string): TZonaResponse<TZonaTorrent>;
+begin
+  var Client := GetClient;
+  try
+    Client.AddQueryParam('q', '(' + Q + ')');
+    Client.AddQueryParam('start', Offset.ToString);
+    Client.AddQueryParam('rows', Count.ToString);
+    if not Sort.IsEmpty then
+      Client.AddQueryParam('sort', Sort);
+    Result := Client.GetEntity<TZonaResponse<TZonaTorrent>>('torrent/select');
   finally
     Client.Free;
   end;
