@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, REST.Client, REST.Types, Zona.API.Response,
   Zona.API.QBuilder, Zona.API.Base, Zona.API.Genre, Zona.API.Movie,
-  Zona.API.Country, Zona.API.Torrent;
+  Zona.API.Country, Zona.API.Torrent, Zona.API.Radio;
 
 type
   TZonaQueryBuilder = Zona.API.QBuilder.TZonaQueryBuilder;
@@ -32,6 +32,7 @@ type
     function GetCountries: TZonaResponse<TZonaCountry>;
     function GetMovies(const Q: string; Offset, Count: Integer; const Sort: string = ''): TZonaResponse<TZonaMovie>;
     function GetTorrents(const Q: string; Offset, Count: Integer; const Sort: string = ''): TZonaResponse<TZonaTorrent>;
+    function GetRadios: TArray<TZonaRadio>;
     class function BuildImageUrlV1(const Id: string): string;
     class function BuildImageUrlV2(const Id: string): string;
   end;
@@ -77,6 +78,7 @@ begin
   Result.BaseURL := FBaseURL;
   Result.AddQueryParam('wt', 'json');
   Result.AddQueryParam('version', FVersion);
+  Result.UserAgent := 'Zona app for fun';
 end;
 
 function TZonaAPI.GetCountries: TZonaResponse<TZonaCountry>;
@@ -122,6 +124,17 @@ begin
     if not Sort.IsEmpty then
       Client.AddQueryParam('sort', Sort);
     Result := Client.GetEntity<TZonaResponse<TZonaMovie>>('movie/select');
+  finally
+    Client.Free;
+  end;
+end;
+
+function TZonaAPI.GetRadios: TArray<TZonaRadio>;
+begin
+  var Client := GetClient;
+  try
+    Client.BaseURL := 'http://radio.zonasearch.com';
+    Result := Client.GetEntityArray<TZonaRadio>('radio2.json');
   finally
     Client.Free;
   end;
